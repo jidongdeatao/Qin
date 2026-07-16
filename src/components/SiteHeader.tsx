@@ -22,18 +22,20 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
         <Link href="/" className="group flex items-center gap-3">
           <Image
-            src="/logo.svg"
+            src="/logo.png"
             alt="瑜伽学人"
             width={44}
             height={44}
-            className="transition-transform duration-500 group-hover:rotate-6"
+            className="rounded-full bg-white shadow-sm transition-transform duration-500 group-hover:rotate-6"
             priority
           />
           <div className="leading-tight">
             <div className="font-[family-name:var(--font-display)] text-xl tracking-wide text-[var(--cosmos-2)] md:text-2xl">
               瑜伽学人
             </div>
-            <div className="text-xs text-[var(--muted)]">Yoga Scholar Archive</div>
+            <div className="text-[11px] tracking-wide text-[var(--muted)] md:text-xs">
+              AI智慧 · 人文哲学 · 身心平衡
+            </div>
           </div>
         </Link>
 

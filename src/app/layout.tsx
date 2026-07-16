@@ -24,14 +24,20 @@ const body = Noto_Sans_SC({
 
 export const metadata: Metadata = {
   title: {
-    default: "瑜伽学人",
+    default: "瑜伽学人 · Yoga Scholar",
     template: "%s · 瑜伽学人",
   },
   description:
-    "瑜伽学人——管理瑜伽哲学、身心科学、声音疗愈与实践技术的在线资料库。",
+    "瑜伽学人（Yoga Scholar）——以 AI 智慧贯通人文哲学，在身心平衡中归档、阅读与思辨瑜伽文献。",
   icons: {
-    icon: "/favicon.svg",
-    apple: "/logo.svg",
+    icon: [{ url: "/favicon.png", type: "image/png" }],
+    apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "瑜伽学人 · Yoga Scholar",
+    description:
+      "以 AI 智慧贯通人文哲学，在身心平衡中归档、阅读与思辨瑜伽文献。",
+    images: [{ url: "/logo-full.png", width: 1024, height: 1024, alt: "瑜伽学人" }],
   },
 };
 
