@@ -8,7 +8,7 @@ export function SiteFooter() {
           <span className="font-[family-name:var(--font-display)] text-[var(--cosmos-2)]">
             瑜伽学人
           </span>
-          {" · "}身心并修，智慧归档
+          {" · "}AI智慧 · 人文哲学 · 身心平衡
         </p>
         <div className="flex gap-4">
           <Link href="/library" className="hover:text-[var(--violet)]">

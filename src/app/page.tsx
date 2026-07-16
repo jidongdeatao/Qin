@@ -2,6 +2,21 @@ import Link from "next/link";
 import { categories } from "@/data/categories";
 import { HomeHero } from "@/components/HomeHero";
 
+const pillars = [
+  {
+    title: "AI 智慧",
+    body: "对所选段落生成摘要、讲解、术语梳理与延伸思考题，让阅读更深入、更高效。",
+  },
+  {
+    title: "人文哲学",
+    body: "从古典文本到当代思想，按主题归档哲学、文化与美学文献，持续沉淀洞见。",
+  },
+  {
+    title: "身心平衡",
+    body: "连接身体科学、心理意识与实践智慧，在文献与练习之间建立可回归的平衡路径。",
+  },
+] as const;
+
 export default function HomePage() {
   return (
     <>
@@ -13,7 +28,7 @@ export default function HomePage() {
             十大知识领域
           </h2>
           <p className="mt-3 text-[var(--muted)]">
-            从哲学文化到身心科学，从实用技术到社会实践——按主题归档，深入阅读，持续积累。
+            以人文哲学为根、身心科学为脉、AI 智慧为伴——按主题归档，深入阅读，持续积累。
           </p>
         </div>
 
@@ -45,20 +60,7 @@ export default function HomePage() {
 
       <section className="border-y border-[var(--line)] bg-white/40">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-3 md:px-6">
-          {[
-            {
-              title: "上传与归档",
-              body: "每个子目录支持文字文档与多媒体上传，资料按主题沉淀。",
-            },
-            {
-              title: "阅读与标注",
-              body: "打开文本档案在线阅读，划选重点并保存个人笔记。",
-            },
-            {
-              title: "AI 辅助阅读",
-              body: "对所选段落生成摘要、讲解、术语梳理与延伸思考题。",
-            },
-          ].map((item) => (
+          {pillars.map((item) => (
             <div key={item.title}>
               <h3 className="font-[family-name:var(--font-display)] text-xl text-[var(--cosmos-2)]">
                 {item.title}
