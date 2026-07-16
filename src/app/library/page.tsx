@@ -11,12 +11,14 @@ export default function LibraryPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 md:px-6 md:py-14">
       <header className="mb-10 max-w-2xl">
-        <p className="text-sm text-[var(--mint-deep)]">Yoga Scholar Archive</p>
+        <p className="text-sm text-[var(--mint-deep)]">
+          AI智慧 · 人文哲学 · 身心平衡
+        </p>
         <h1 className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--cosmos-2)] md:text-5xl">
           资料库导航
         </h1>
         <p className="mt-3 text-[var(--muted)]">
-          选择主题进入子目录，上传文档与音视频，阅读并标注你的学习轨迹。
+          选择主题进入子目录，上传文档与音视频；在阅读与 AI 辅助中，持续建立身心平衡的学习轨迹。
         </p>
       </header>
 

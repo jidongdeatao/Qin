@@ -11,7 +11,7 @@ export const categories: CategoryNode[] = [
   {
     slug: "philosophy-culture",
     title: "瑜伽哲学与文化",
-    description: "探索瑜伽思想源流、史学脉络与美学表达。",
+    description: "以人文哲学为径，探索瑜伽思想源流、史学脉络与美学表达。",
     children: [
       {
         slug: "yoga-philosophy",
@@ -39,7 +39,7 @@ export const categories: CategoryNode[] = [
   {
     slug: "body-science",
     title: "身体健康与运动科学",
-    description: "从解剖、生理到公共卫生的科学视角。",
+    description: "从解剖、生理到公共卫生，以科学方法守护身心平衡。",
     children: [
       {
         slug: "anatomy",
