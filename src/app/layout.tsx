@@ -33,6 +33,12 @@ export const metadata: Metadata = {
     icon: [{ url: "/favicon.png", type: "image/png" }],
     apple: "/apple-touch-icon.png",
   },
+  openGraph: {
+    title: "瑜伽学人 · Yoga Scholar",
+    description:
+      "以 AI 智慧贯通人文哲学，在身心平衡中归档、阅读与思辨瑜伽文献。",
+    images: [{ url: "/logo-full.png", width: 1024, height: 1024, alt: "瑜伽学人" }],
+  },
 };
 
 export default function RootLayout({
