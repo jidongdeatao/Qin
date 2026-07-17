@@ -6,6 +6,19 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
 const META_FILE = path.join(DATA_DIR, "files.json");
 const NOTES_FILE = path.join(DATA_DIR, "notes.json");
+const SEED_DIR = path.join(process.cwd(), "content", "seed");
+const SEED_MANIFEST = path.join(SEED_DIR, "manifest.json");
+
+type SeedManifestItem = {
+  id: string;
+  sourceFile: string;
+  originalName: string;
+  categoryPath: string;
+  description?: string;
+  mimeType?: string;
+};
+
+let seedPromise: Promise<void> | null = null;
 
 async function ensureDirs() {
   await fs.mkdir(UPLOADS_DIR, { recursive: true });
@@ -19,6 +32,60 @@ async function ensureDirs() {
   } catch {
     await fs.writeFile(NOTES_FILE, "[]", "utf8");
   }
+}
+
+async function ensureSeedLibrary() {
+  if (!seedPromise) {
+    seedPromise = (async () => {
+      await ensureDirs();
+      let manifest: SeedManifestItem[] = [];
+      try {
+        const raw = await fs.readFile(SEED_MANIFEST, "utf8");
+        manifest = JSON.parse(raw) as SeedManifestItem[];
+      } catch {
+        return;
+      }
+      if (!Array.isArray(manifest) || manifest.length === 0) return;
+
+      const files = await readJsonArray<LibraryFile>(META_FILE);
+      const existing = new Set(files.map((f) => f.id));
+      let changed = false;
+
+      for (const item of manifest) {
+        if (existing.has(item.id)) continue;
+        const sourcePath = path.join(SEED_DIR, item.sourceFile);
+        let text = "";
+        try {
+          text = await fs.readFile(sourcePath, "utf8");
+        } catch {
+          continue;
+        }
+        const ext = path.extname(item.sourceFile) || ".md";
+        const storedName = `${item.id}${ext}`;
+        await fs.writeFile(path.join(UPLOADS_DIR, storedName), text, "utf8");
+        files.push({
+          id: item.id,
+          name: storedName,
+          originalName: item.originalName,
+          mimeType: item.mimeType || "text/markdown",
+          size: Buffer.byteLength(text, "utf8"),
+          categoryPath: item.categoryPath,
+          uploadedAt: "2026-01-01T00:00:00.000Z",
+          textContent: text,
+          description: item.description,
+        });
+        changed = true;
+      }
+
+      if (changed) {
+        await writeJsonArray(META_FILE, files);
+      }
+    })().catch((err) => {
+      seedPromise = null;
+      console.error("[seed] failed to load library seed:", err);
+    });
+  }
+  await seedPromise;
 }
 
 async function readJsonArray<T>(file: string): Promise<T[]> {
@@ -38,6 +105,7 @@ async function writeJsonArray<T>(file: string, data: T[]) {
 }
 
 export async function listFiles(categoryPath?: string): Promise<LibraryFile[]> {
+  await ensureSeedLibrary();
   const files = await readJsonArray<LibraryFile>(META_FILE);
   if (!categoryPath) return files.sort(byDateDesc);
   return files
@@ -46,11 +114,13 @@ export async function listFiles(categoryPath?: string): Promise<LibraryFile[]> {
 }
 
 export async function getFile(id: string): Promise<LibraryFile | null> {
+  await ensureSeedLibrary();
   const files = await readJsonArray<LibraryFile>(META_FILE);
   return files.find((f) => f.id === id) ?? null;
 }
 
 export async function saveFileMeta(file: LibraryFile): Promise<LibraryFile> {
+  await ensureSeedLibrary();
   const files = await readJsonArray<LibraryFile>(META_FILE);
   files.push(file);
   await writeJsonArray(META_FILE, files);
@@ -61,6 +131,7 @@ export async function updateFileMeta(
   id: string,
   patch: Partial<LibraryFile>,
 ): Promise<LibraryFile | null> {
+  await ensureSeedLibrary();
   const files = await readJsonArray<LibraryFile>(META_FILE);
   const idx = files.findIndex((f) => f.id === id);
   if (idx < 0) return null;
@@ -70,6 +141,7 @@ export async function updateFileMeta(
 }
 
 export async function deleteFile(id: string): Promise<boolean> {
+  await ensureSeedLibrary();
   const files = await readJsonArray<LibraryFile>(META_FILE);
   const target = files.find((f) => f.id === id);
   if (!target) return false;
@@ -104,6 +176,7 @@ export async function writeUpload(storedName: string, data: Buffer) {
 }
 
 export async function listNotes(fileId: string): Promise<AnnotationNote[]> {
+  await ensureSeedLibrary();
   const notes = await readJsonArray<AnnotationNote>(NOTES_FILE);
   return notes
     .filter((n) => n.fileId === fileId)
@@ -111,6 +184,7 @@ export async function listNotes(fileId: string): Promise<AnnotationNote[]> {
 }
 
 export async function saveNote(note: AnnotationNote): Promise<AnnotationNote> {
+  await ensureSeedLibrary();
   const notes = await readJsonArray<AnnotationNote>(NOTES_FILE);
   notes.push(note);
   await writeJsonArray(NOTES_FILE, notes);
@@ -121,6 +195,7 @@ export async function updateNote(
   id: string,
   patch: Partial<AnnotationNote>,
 ): Promise<AnnotationNote | null> {
+  await ensureSeedLibrary();
   const notes = await readJsonArray<AnnotationNote>(NOTES_FILE);
   const idx = notes.findIndex((n) => n.id === id);
   if (idx < 0) return null;
@@ -134,6 +209,7 @@ export async function updateNote(
 }
 
 export async function deleteNote(id: string): Promise<boolean> {
+  await ensureSeedLibrary();
   const notes = await readJsonArray<AnnotationNote>(NOTES_FILE);
   const next = notes.filter((n) => n.id !== id);
   if (next.length === notes.length) return false;
@@ -147,11 +223,20 @@ function byDateDesc(a: LibraryFile, b: LibraryFile) {
 
 export function isTextReadable(mimeType: string, filename: string) {
   if (mimeType.startsWith("text/")) return true;
-  if (mimeType === "application/json") return true;
-  if (mimeType === "application/markdown") return true;
-  return /\.(txt|md|markdown|json|csv|log)$/i.test(filename);
+  if (
+    mimeType === "application/json" ||
+    mimeType === "application/markdown" ||
+    mimeType === "application/xml"
+  ) {
+    return true;
+  }
+  return /\.(txt|md|markdown|json|csv|log|html|htm|xml)$/i.test(filename);
 }
 
 export function isMediaFile(mimeType: string) {
   return mimeType.startsWith("audio/") || mimeType.startsWith("video/");
+}
+
+export function isPdfFile(mimeType: string, filename: string) {
+  return mimeType === "application/pdf" || /\.pdf$/i.test(filename);
 }

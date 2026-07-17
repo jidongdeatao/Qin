@@ -155,6 +155,8 @@ export function DocumentReader({ fileId }: { fileId: string }) {
 
   const isAudio = file.mimeType.startsWith("audio/");
   const isVideo = file.mimeType.startsWith("video/");
+  const isPdf =
+    file.mimeType === "application/pdf" || /\.pdf$/i.test(file.originalName);
   const hasText = Boolean(file.textContent);
 
   return (
@@ -201,6 +203,19 @@ export function DocumentReader({ fileId }: { fileId: string }) {
               src={`/api/files/${file.id}/download?inline=1`}
             />
           )}
+        </div>
+      )}
+
+      {isPdf && (
+        <div className="glass-panel animate-rise-delay overflow-hidden rounded-2xl">
+          <iframe
+            title={file.originalName}
+            src={`/api/files/${file.id}/download?inline=1`}
+            className="h-[70vh] w-full bg-white"
+          />
+          <p className="border-t border-[var(--line)] px-4 py-3 text-xs text-[var(--muted)]">
+            若浏览器无法内嵌预览 PDF，请使用右上角下载后本地打开。
+          </p>
         </div>
       )}
 
@@ -327,14 +342,15 @@ export function DocumentReader({ fileId }: { fileId: string }) {
         </div>
       ) : (
         !isAudio &&
-        !isVideo && (
+        !isVideo &&
+        !isPdf && (
           <div className="glass-panel rounded-2xl p-6 text-sm text-[var(--muted)]">
-            该文件类型暂不支持在线文本阅读。请下载后本地打开；你仍可为该条目添加说明性笔记（可先上传一份文本摘要）。
+            该文件类型暂不支持在线文本阅读。请下载后本地打开；也可另传一份 Markdown/文本摘要以便标注与 AI 辅助。
           </div>
         )
       )}
 
-      {!hasText && (isAudio || isVideo) && (
+      {!hasText && (isAudio || isVideo || isPdf) && (
         <div className="glass-panel rounded-2xl p-4 md:p-6">
           <h2 className="mb-3 font-[family-name:var(--font-display)] text-lg text-[var(--cosmos-2)]">
             媒体笔记

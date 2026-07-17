@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import type { LibraryFile } from "@/lib/types";
 import { formatBytes, formatDate } from "@/lib/format";
+import { DEFAULT_UPLOAD_ACCEPT } from "@/lib/upload-accept";
 
 function fileIcon(mime: string) {
   if (mime.startsWith("audio/")) return Music;
@@ -34,6 +35,8 @@ export function FileLibrary({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [description, setDescription] = useState("");
+  const [dragOver, setDragOver] = useState(false);
+  const [progress, setProgress] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -80,24 +83,41 @@ export function FileLibrary({
     };
   }, [categoryPath]);
 
-  async function onUpload(fileList: FileList | null) {
-    if (!fileList?.length) return;
+  async function onUpload(fileList: FileList | File[] | null) {
+    const list = fileList
+      ? Array.isArray(fileList)
+        ? fileList
+        : Array.from(fileList)
+      : [];
+    if (!list.length) return;
+
     setUploading(true);
     setError("");
     try {
-      for (const file of Array.from(fileList)) {
+      for (let i = 0; i < list.length; i += 1) {
+        const file = list[i];
+        setProgress(`正在上传 ${i + 1}/${list.length}：${file.name}`);
         const form = new FormData();
         form.append("file", file);
         form.append("categoryPath", categoryPath);
         if (description.trim()) form.append("description", description.trim());
         const res = await fetch("/api/files", { method: "POST", body: form });
-        const data = (await res.json()) as { error?: string };
-        if (!res.ok) throw new Error(data.error || `上传失败：${file.name}`);
+        let data: { error?: string } = {};
+        try {
+          data = (await res.json()) as { error?: string };
+        } catch {
+          data = {};
+        }
+        if (!res.ok) {
+          throw new Error(data.error || `上传失败：${file.name}（HTTP ${res.status}）`);
+        }
       }
       setDescription("");
+      setProgress("");
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "上传失败");
+      setProgress("");
     } finally {
       setUploading(false);
     }
@@ -123,23 +143,51 @@ export function FileLibrary({
         </div>
         <p className="mb-4 text-sm text-[var(--muted)]">
           {mediaHint ||
-            "支持文本、文档、音视频等材料。文本类文件可在线阅读、标注笔记，并使用 AI 辅助阅读。"}
+            "支持文本、PDF、Office 文档、图片与音视频。文本/Markdown 可在线阅读与 AI 辅助；PDF 可在线预览。"}
         </p>
         <label className="mb-3 block text-sm text-[var(--muted)]">
           资料说明（可选）
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="例如：课堂讲义 / 冥想引导脚本"
+            placeholder="例如：课堂讲义 / 经典导读 / 研究摘要"
             className="mt-1 w-full rounded-lg border border-[var(--line)] bg-white/80 px-3 py-2 text-[var(--ink)] outline-none ring-[var(--violet-soft)] focus:ring-2"
           />
         </label>
-        <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-[rgba(124,58,237,0.35)] bg-[rgba(245,243,255,0.65)] px-4 py-8 text-center transition hover:border-[var(--violet)] hover:bg-white/80">
+        <label
+          className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed px-4 py-8 text-center transition ${
+            dragOver
+              ? "border-[var(--violet)] bg-white"
+              : "border-[rgba(124,58,237,0.35)] bg-[rgba(245,243,255,0.65)] hover:border-[var(--violet)] hover:bg-white/80"
+          }`}
+          onDragEnter={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setDragOver(true);
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setDragOver(true);
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setDragOver(false);
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setDragOver(false);
+            if (uploading) return;
+            void onUpload(e.dataTransfer.files);
+          }}
+        >
           <input
             type="file"
             className="hidden"
             multiple
-            accept={accept}
+            accept={accept || DEFAULT_UPLOAD_ACCEPT}
             disabled={uploading}
             onChange={(e) => {
               void onUpload(e.target.files);
@@ -147,12 +195,17 @@ export function FileLibrary({
             }}
           />
           {uploading ? (
-            <Loader2 className="animate-spin text-[var(--violet)]" />
+            <>
+              <Loader2 className="animate-spin text-[var(--violet)]" />
+              <span className="mt-2 text-xs text-[var(--muted)]">{progress || "上传中…"}</span>
+            </>
           ) : (
             <>
               <Upload className="mb-2 text-[var(--violet)]" />
               <span className="text-sm text-[var(--ink)]">点击选择文件或拖拽到此处</span>
-              <span className="mt-1 text-xs text-[var(--muted)]">单文件不超过 40MB</span>
+              <span className="mt-1 text-xs text-[var(--muted)]">
+                支持批量上传，单文件不超过 40MB
+              </span>
             </>
           )}
         </label>
@@ -176,6 +229,9 @@ export function FileLibrary({
               const isMedia =
                 file.mimeType.startsWith("audio/") ||
                 file.mimeType.startsWith("video/");
+              const isPdf =
+                file.mimeType === "application/pdf" ||
+                /\.pdf$/i.test(file.originalName);
 
               return (
                 <li
@@ -207,7 +263,7 @@ export function FileLibrary({
                           : "bg-[var(--violet)] hover:bg-[var(--cosmos-3)]"
                       }`}
                     >
-                      {isMedia ? "播放 / 笔记" : "打开阅读"}
+                      {isMedia ? "播放 / 笔记" : isPdf ? "预览 PDF" : "打开阅读"}
                     </Link>
                     <a
                       href={`/api/files/${file.id}/download`}
