@@ -10,6 +10,7 @@ import { getLinksForPath } from "@/data/resource-links";
 import { CategoryTree } from "@/components/CategoryTree";
 import { FileLibrary } from "@/components/FileLibrary";
 import { ResourceLinks } from "@/components/ResourceLinks";
+import { DEFAULT_UPLOAD_ACCEPT } from "@/lib/upload-accept";
 
 type Props = {
   params: Promise<{ slug: string[] }>;
@@ -34,11 +35,12 @@ export default async function CategoryPage({ params }: Props) {
   const showLinks = current.kind === "links" || links.length > 0;
   const hasChildren = Boolean(current.children?.length);
   const isLeaf = !hasChildren;
+  const rankedLinks = pathKey === "others";
 
   const mediaAccept =
     current.kind === "media"
-      ? ".txt,.md,.markdown,.pdf,.doc,.docx,.mp3,.wav,.m4a,.mp4,.webm,.mov,audio/*,video/*,text/*"
-      : undefined;
+      ? ".txt,.md,.markdown,.pdf,.doc,.docx,.mp3,.wav,.m4a,.mp4,.webm,.mov,audio/*,video/*,text/*,application/pdf"
+      : DEFAULT_UPLOAD_ACCEPT;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 md:px-6 md:py-14">
@@ -88,11 +90,20 @@ export default async function CategoryPage({ params }: Props) {
 
       {showLinks && (
         <section className="mb-12">
-          <h2 className="mb-4 font-[family-name:var(--font-display)] text-2xl text-[var(--ink)]">
-            {current.kind === "links" ? "推荐权威链接" : "相关推荐链接"}
+          <h2 className="mb-2 font-[family-name:var(--font-display)] text-2xl text-[var(--ink)]">
+            {rankedLinks
+              ? "印度瑜伽大学 / 高校 / 研究机构（按国际影响力排序）"
+              : current.kind === "links"
+                ? "推荐权威链接"
+                : "相关推荐链接"}
           </h2>
+          {rankedLinks && (
+            <p className="mb-4 text-sm text-[var(--muted)]">
+              排序综合参考：国际学术可见度与研究合作、国家级定位、历史传承与全球教学影响。非单一官方排行榜。
+            </p>
+          )}
           <div className="glass-panel rounded-2xl p-5 md:p-6">
-            <ResourceLinks links={links} />
+            <ResourceLinks links={links} showRank={rankedLinks} />
           </div>
         </section>
       )}
@@ -104,7 +115,8 @@ export default async function CategoryPage({ params }: Props) {
           </h2>
           <FileLibrary
             categoryPath={pathKey}
-            mediaHint="除推荐外链外，你也可上传本地整理的链接清单或摘录文档。"
+            accept={DEFAULT_UPLOAD_ACCEPT}
+            mediaHint="除推荐外链外，你也可上传本地整理的链接清单、机构简介或摘录文档。"
           />
         </section>
       ) : isLeaf ? (
@@ -113,10 +125,10 @@ export default async function CategoryPage({ params }: Props) {
           accept={mediaAccept}
           mediaHint={
             current.kind === "media"
-              ? "本栏目支持上传文本、音频与视频素材，便于声音疗愈与智慧问答的资料管理。"
+              ? "本栏目支持上传文本、PDF、音频与视频素材。"
               : current.kind === "community"
                 ? "分享社群活动纪要、课程纲要与实践心得文档。"
-                : undefined
+                : "支持上传文本、PDF、Office 与多媒体资料；经典文献可直接归档于此。"
           }
         />
       ) : (

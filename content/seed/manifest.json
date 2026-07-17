@@ -1,0 +1,58 @@
+[
+  {
+    "id": "seed-yoga-sutras-guide",
+    "sourceFile": "philosophy-culture/yoga-philosophy/yoga-sutras-guide.md",
+    "originalName": "《瑜伽经》导读与核心经文摘录.md",
+    "categoryPath": "philosophy-culture/yoga-philosophy",
+    "description": "帕特嘉利《瑜伽经》公开领域导读与关键经文摘录，适合哲学门类入门与笔记。",
+    "mimeType": "text/markdown"
+  },
+  {
+    "id": "seed-bhagavad-gita-yoga",
+    "sourceFile": "philosophy-culture/yoga-philosophy/bhagavad-gita-yoga-chapters.md",
+    "originalName": "《薄伽梵歌》瑜伽篇章导读.md",
+    "categoryPath": "philosophy-culture/yoga-philosophy",
+    "description": "业瑜伽、智瑜伽、信瑜伽等篇章导读，公有领域文本整理。",
+    "mimeType": "text/markdown"
+  },
+  {
+    "id": "seed-ashtanga-outline",
+    "sourceFile": "practical-techniques/classical/raja-ashtanga/ashtanga-practice-outline.md",
+    "originalName": "八支瑜伽（王瑜伽）实践纲要.md",
+    "categoryPath": "practical-techniques/classical/raja-ashtanga",
+    "description": "依《瑜伽经》八支体系整理的实践纲要与术语对照。",
+    "mimeType": "text/markdown"
+  },
+  {
+    "id": "seed-hatha-pradipika",
+    "sourceFile": "practical-techniques/classical/hatha/hatha-yoga-pradipika-guide.md",
+    "originalName": "《哈他瑜伽灯论》导读摘录.md",
+    "categoryPath": "practical-techniques/classical/hatha",
+    "description": "哈他瑜伽经典文献导读与公开领域要点摘录。",
+    "mimeType": "text/markdown"
+  },
+  {
+    "id": "seed-meditation-mindfulness",
+    "sourceFile": "psychology-consciousness/meditation-mindfulness/meditation-mindfulness-primer.md",
+    "originalName": "冥想与正念基础文献导读.md",
+    "categoryPath": "psychology-consciousness/meditation-mindfulness",
+    "description": "传统禅定与当代正念研究交叉的基础导读。",
+    "mimeType": "text/markdown"
+  },
+  {
+    "id": "seed-yoga-medicine",
+    "sourceFile": "body-science/medicine/yoga-medicine-research-primer.md",
+    "originalName": "瑜伽医学研究导引.md",
+    "categoryPath": "body-science/medicine",
+    "description": "瑜伽作为辅助医学路径的研究导引与权威检索入口说明。",
+    "mimeType": "text/markdown"
+  },
+  {
+    "id": "seed-yoga-neuroscience",
+    "sourceFile": "hot-topics/yoga-neuroscience/yoga-neuroscience-primer.md",
+    "originalName": "瑜伽与神经科学入门导读.md",
+    "categoryPath": "hot-topics/yoga-neuroscience",
+    "description": "脑影像、自主神经与瑜伽干预研究的入门导读。",
+    "mimeType": "text/markdown"
+  }
+]

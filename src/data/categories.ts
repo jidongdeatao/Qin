@@ -222,7 +222,8 @@ export const categories: CategoryNode[] = [
   {
     slug: "others",
     title: "其他",
-    description: "各类权威瑜伽信息网站与附属资源链接。",
+    description:
+      "按国际影响力综合排序的印度著名瑜伽大学、高校与研究机构链接，以及相关权威门户。",
     kind: "links",
   },
 ];
