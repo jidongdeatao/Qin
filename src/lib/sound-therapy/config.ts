@@ -31,6 +31,8 @@ export type TherapyInstrument = {
   name: string;
   english: string;
   glyph: string;
+  image: string;
+  durationMs: number;
   description: string;
 };
 
@@ -83,6 +85,8 @@ export const THERAPY_INSTRUMENTS: TherapyInstrument[] = [
     name: "叮夏",
     english: "Tingsha",
     glyph: "◉",
+    image: "/sound-therapy/instruments/tingsha.webp",
+    durationMs: 4600,
     description: "清亮金属泛音，唤回当下",
   },
   {
@@ -90,6 +94,8 @@ export const THERAPY_INSTRUMENTS: TherapyInstrument[] = [
     name: "果壳铃",
     english: "Seed shaker",
     glyph: "⌇",
+    image: "/sound-therapy/instruments/seed-shaker.webp",
+    durationMs: 1800,
     description: "细密颗粒声，轻柔唤醒身体",
   },
   {
@@ -97,6 +103,8 @@ export const THERAPY_INSTRUMENTS: TherapyInstrument[] = [
     name: "风铃",
     english: "Wind chime",
     glyph: "♢",
+    image: "/sound-therapy/instruments/wind-chime.webp",
+    durationMs: 4300,
     description: "随机音阶，如风穿过空间",
   },
   {
@@ -104,6 +112,8 @@ export const THERAPY_INSTRUMENTS: TherapyInstrument[] = [
     name: "雨棍",
     english: "Rainstick",
     glyph: "╱",
+    image: "/sound-therapy/instruments/rainstick.webp",
+    durationMs: 5800,
     description: "绵长雨声，洗去紧张",
   },
   {
@@ -111,6 +121,8 @@ export const THERAPY_INSTRUMENTS: TherapyInstrument[] = [
     name: "萨满鼓",
     english: "Shaman drum",
     glyph: "●",
+    image: "/sound-therapy/instruments/shaman-drum.webp",
+    durationMs: 2600,
     description: "低沉脉冲，带来稳定节律",
   },
   {
@@ -118,6 +130,8 @@ export const THERAPY_INSTRUMENTS: TherapyInstrument[] = [
     name: "铜锣",
     english: "Gong",
     glyph: "◎",
+    image: "/sound-therapy/instruments/gong.webp",
+    durationMs: 7600,
     description: "宽广音浪，层层扩散",
   },
   {
@@ -125,6 +139,8 @@ export const THERAPY_INSTRUMENTS: TherapyInstrument[] = [
     name: "海洋鼓",
     english: "Ocean drum",
     glyph: "≈",
+    image: "/sound-therapy/instruments/ocean-drum.webp",
+    durationMs: 7200,
     description: "潮汐白噪，舒展呼吸",
   },
   {
@@ -132,6 +148,8 @@ export const THERAPY_INSTRUMENTS: TherapyInstrument[] = [
     name: "手碟",
     english: "Handpan",
     glyph: "✦",
+    image: "/sound-therapy/instruments/handpan.webp",
+    durationMs: 3600,
     description: "温暖旋律音，点亮空间",
   },
 ];

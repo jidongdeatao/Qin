@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   Download,
   Headphones,
@@ -33,13 +34,13 @@ const TOOLS: Array<{
 ];
 
 const BOWL_ARC = [
-  { y: 58, rotate: -7 },
-  { y: 29, rotate: -4 },
-  { y: 9, rotate: -2 },
-  { y: 0, rotate: 0 },
-  { y: 9, rotate: 2 },
-  { y: 29, rotate: 4 },
-  { y: 58, rotate: 7 },
+  { y: 58, mobileY: 34, rotate: -7 },
+  { y: 29, mobileY: 17, rotate: -4 },
+  { y: 9, mobileY: 6, rotate: -2 },
+  { y: 0, mobileY: 0, rotate: 0 },
+  { y: 9, mobileY: 6, rotate: 2 },
+  { y: 29, mobileY: 17, rotate: 4 },
+  { y: 58, mobileY: 34, rotate: 7 },
 ] as const;
 
 function formatTime(seconds: number) {
@@ -59,14 +60,16 @@ function ToolIllustration({ mode }: { mode: ToolMode }) {
 export function SoundTherapyGame() {
   const engineRef = useRef<SoundTherapyEngine | null>(null);
   const recordingStartedAt = useRef(0);
+  const instrumentTimers = useRef<Partial<Record<string, number>>>({});
   const [tool, setTool] = useState<ToolMode>("mallet");
   const [activeBowls, setActiveBowls] = useState<Set<string>>(new Set());
-  const [activeInstrument, setActiveInstrument] = useState<string | null>(null);
+  const [activeInstruments, setActiveInstruments] = useState<Set<string>>(new Set());
   const [volume, setVolume] = useState(72);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [recordedUrl, setRecordedUrl] = useState<string | null>(null);
   const [recordedType, setRecordedType] = useState("audio/webm");
+  const [audioReady, setAudioReady] = useState(false);
   const [notice, setNotice] = useState("选择一种演奏方式，然后触碰颂钵");
 
   const getEngine = useCallback(async () => {
@@ -74,15 +77,31 @@ export function SoundTherapyGame() {
       if (!engineRef.current) engineRef.current = new SoundTherapyEngine();
       await engineRef.current.wake();
       engineRef.current.setVolume(volume / 100);
+      setAudioReady(true);
       return engineRef.current;
     } catch {
+      setAudioReady(false);
       setNotice("浏览器暂时无法启动声音，请检查静音设置或更换浏览器");
       return null;
     }
   }, [volume]);
 
   useEffect(() => {
-    return () => engineRef.current?.dispose();
+    const timers = instrumentTimers.current;
+    const resumeAudio = () => {
+      if (document.visibilityState === "visible" && engineRef.current) {
+        void engineRef.current
+          .wake()
+          .then(() => setAudioReady(true))
+          .catch(() => setAudioReady(false));
+      }
+    };
+    document.addEventListener("visibilitychange", resumeAudio);
+    return () => {
+      document.removeEventListener("visibilitychange", resumeAudio);
+      Object.values(timers).forEach((timer) => window.clearTimeout(timer));
+      engineRef.current?.dispose();
+    };
   }, []);
 
   useEffect(() => {
@@ -169,10 +188,39 @@ export function SoundTherapyGame() {
     const engine = await getEngine();
     if (!engine) return;
     engine.playInstrument(instrumentId);
-    setActiveInstrument(instrumentId);
+    setActiveInstruments((current) => new Set(current).add(instrumentId));
     const instrument = THERAPY_INSTRUMENTS.find((item) => item.id === instrumentId);
     setNotice(`${instrument?.name ?? "乐器"} 已加入此刻的声场`);
-    window.setTimeout(() => setActiveInstrument((current) => (current === instrumentId ? null : current)), 650);
+    const existingTimer = instrumentTimers.current[instrumentId];
+    if (existingTimer) window.clearTimeout(existingTimer);
+    instrumentTimers.current[instrumentId] = window.setTimeout(
+      () =>
+        setActiveInstruments((current) => {
+          const next = new Set(current);
+          next.delete(instrumentId);
+          return next;
+        }),
+      instrument?.durationMs ?? 3000,
+    );
+  }
+
+  async function activateSound() {
+    const engine = await getEngine();
+    if (!engine) return;
+    engine.playInstrument("tingsha");
+    setActiveInstruments((current) => new Set(current).add("tingsha"));
+    const existingTimer = instrumentTimers.current.tingsha;
+    if (existingTimer) window.clearTimeout(existingTimer);
+    instrumentTimers.current.tingsha = window.setTimeout(
+      () =>
+        setActiveInstruments((current) => {
+          const next = new Set(current);
+          next.delete("tingsha");
+          return next;
+        }),
+      4600,
+    );
+    setNotice("声音已开启 · 你应该能听见一声清亮的叮夏");
   }
 
   function changeVolume(nextVolume: number) {
@@ -258,10 +306,24 @@ export function SoundTherapyGame() {
                 选择演奏方式
               </h2>
             </div>
-            <p className="flex items-center gap-2 text-xs tracking-wider text-[#7c7769]">
-              <Info size={14} />
-              磨钵时请按住颂钵，松开后余音会自然消散
-            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="flex items-center gap-2 text-xs tracking-wider text-[#7c7769]">
+                <Info size={14} />
+                磨钵时请按住颂钵，松开后余音会自然消散
+              </p>
+              <button
+                type="button"
+                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition ${
+                  audioReady
+                    ? "border-[#728b6d55] bg-[#eef5e9] text-[#52634e]"
+                    : "border-[#9a875577] bg-[#fffdf6] text-[#6f603d] shadow-sm"
+                }`}
+                onClick={() => void activateSound()}
+              >
+                <Volume2 size={14} />
+                {audioReady ? "声音已开启" : "点此开启声音"}
+              </button>
+            </div>
           </div>
 
           <div className="mt-8 grid gap-3 md:grid-cols-3">
@@ -342,6 +404,7 @@ export function SoundTherapyGame() {
                           "--bowl-color": tone.color,
                           "--bowl-glow": tone.glow,
                           "--arc-y": `${BOWL_ARC[toneIndex].y}px`,
+                          "--arc-mobile-y": `${BOWL_ARC[toneIndex].mobileY}px`,
                           "--arc-rotate": `${BOWL_ARC[toneIndex].rotate}deg`,
                           "--register-scale": 0.86 + registerIndex * 0.035,
                         } as CSSProperties
@@ -367,7 +430,7 @@ export function SoundTherapyGame() {
             ))}
           </div>
           <p className="mt-3 text-right text-[10px] tracking-wider text-[#888275] md:hidden">
-            ← 左右滑动查看完整音阶 →
+            七只颂钵已按屏幕宽度自适应排列
           </p>
         </section>
 
@@ -394,19 +457,36 @@ export function SoundTherapyGame() {
                 key={instrument.id}
                 type="button"
                 className={`${styles.instrument} ${
-                  activeInstrument === instrument.id ? "ring-1 ring-[#9a8755]" : ""
+                  activeInstruments.has(instrument.id) ? "ring-1 ring-[#9a8755]" : ""
                 }`}
+                data-instrument={instrument.id}
+                data-playing={activeInstruments.has(instrument.id)}
                 onClick={() => void playInstrument(instrument.id)}
               >
-                <span className={styles.instrumentGlyph}>{instrument.glyph}</span>
-                <span className="mt-5 block font-[family-name:var(--font-display)] text-xl">
+                <span className={styles.instrumentVisual}>
+                  <Image
+                    src={instrument.image}
+                    alt={`${instrument.name}音疗乐器`}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 260px"
+                    className={styles.instrumentImage}
+                  />
+                  <i className={styles.resonanceWave} aria-hidden />
+                </span>
+                <span className="mt-4 block font-[family-name:var(--font-display)] text-xl">
                   {instrument.name}
                 </span>
                 <span className="mt-0.5 block text-[9px] tracking-[0.18em] text-[#9b927d] uppercase">
                   {instrument.english}
                 </span>
                 <span className="mt-3 block text-xs leading-5 text-[#777164]">{instrument.description}</span>
-                <Play className="absolute right-4 top-4 text-[#8f7c4c]" size={14} fill="currentColor" />
+                <span className={styles.instrumentPlay}>
+                  {activeInstruments.has(instrument.id) ? (
+                    <Volume2 size={14} />
+                  ) : (
+                    <Play size={13} fill="currentColor" />
+                  )}
+                </span>
               </button>
             ))}
           </div>
