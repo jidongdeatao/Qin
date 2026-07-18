@@ -136,10 +136,58 @@
   animation: rotate 3.6s linear infinite;
 }
 
+.registerRow {
+  display: grid;
+  min-width: 790px;
+  min-height: 238px;
+  grid-template-columns: 128px minmax(620px, 1fr);
+  align-items: center;
+  overflow: hidden;
+  padding: 24px 24px 18px;
+  border: 1px solid rgba(81, 76, 61, 0.13);
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 62% 12%, rgba(255, 255, 255, 0.72), transparent 56%),
+    rgba(255, 255, 255, 0.3);
+  box-shadow: 0 18px 45px rgba(69, 64, 48, 0.055);
+}
+
+.registerMeta {
+  position: relative;
+  z-index: 2;
+  align-self: center;
+  padding-right: 20px;
+}
+
+.bowlArc {
+  position: relative;
+  display: grid;
+  height: 186px;
+  grid-template-columns: repeat(7, minmax(76px, 1fr));
+  align-items: start;
+}
+
+.bowlArc::before {
+  position: absolute;
+  z-index: 0;
+  top: 42px;
+  right: 4%;
+  left: 4%;
+  height: 96px;
+  content: "";
+  border-top: 1px dashed rgba(139, 120, 71, 0.24);
+  border-radius: 50%;
+  transform: translateY(22px);
+}
+
 .bowl {
   --bowl-color: #927d4c;
   --bowl-glow: #c8ac67;
+  --arc-y: 0px;
+  --arc-rotate: 0deg;
+  --register-scale: 1;
   position: relative;
+  z-index: 1;
   display: flex;
   width: 100%;
   min-width: 0;
@@ -151,6 +199,9 @@
   color: inherit;
   background: transparent;
   isolation: isolate;
+  transform: translateY(var(--arc-y)) rotate(var(--arc-rotate)) scale(var(--register-scale));
+  transform-origin: 50% 50%;
+  transition: transform 220ms ease;
   -webkit-tap-highlight-color: transparent;
 }
 
