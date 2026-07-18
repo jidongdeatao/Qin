@@ -61,6 +61,16 @@ export function SiteHeader() {
             资料库
           </Link>
           <Link
+            href="/sound-therapy"
+            className={`rounded-md px-3 py-2 text-sm transition ${
+              pathname.startsWith("/sound-therapy")
+                ? "bg-white text-[var(--violet)]"
+                : "text-[var(--muted)] hover:bg-white/70 hover:text-[var(--ink)]"
+            }`}
+          >
+            颂钵音疗
+          </Link>
+          <Link
             href="/c/others"
             className={`rounded-md px-3 py-2 text-sm transition ${
               pathname.startsWith("/c/others")
@@ -90,6 +100,9 @@ export function SiteHeader() {
             </Link>
             <Link href="/library" className="rounded-md bg-[var(--foam)] px-3 py-2">
               资料库
+            </Link>
+            <Link href="/sound-therapy" className="rounded-md bg-[var(--foam)] px-3 py-2">
+              颂钵音疗
             </Link>
           </div>
           <ul className="grid max-h-[60vh] gap-1 overflow-auto text-sm">
