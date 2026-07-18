@@ -32,6 +32,16 @@ const TOOLS: Array<{
   { id: "mallet", name: "棒槌 · 柔敲", hint: "温柔圆润，适合冥想铺底", action: "轻点演奏" },
 ];
 
+const BOWL_ARC = [
+  { y: 58, rotate: -7 },
+  { y: 29, rotate: -4 },
+  { y: 9, rotate: -2 },
+  { y: 0, rotate: 0 },
+  { y: 9, rotate: 2 },
+  { y: 29, rotate: 4 },
+  { y: 58, rotate: 7 },
+] as const;
+
 function formatTime(seconds: number) {
   const minutes = Math.floor(seconds / 60);
   return `${String(minutes).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
@@ -98,11 +108,11 @@ export function SoundTherapyGame() {
   }, []);
 
   const strikeBowl = useCallback(
-    async (tone: BowlTone) => {
+    async (tone: BowlTone, registerIndex: number) => {
       const engine = await getEngine();
       if (!engine) return;
       const isMallet = tool === "mallet";
-      engine.playBowl(tone.frequency, isMallet ? 0.9 : 0.58);
+      engine.playBowl(tone.frequency, isMallet ? 0.9 : 0.58, registerIndex);
       markBowlActive(tone.id, true);
       setNotice(`${tone.note} · ${tone.chakra} 正在回响`);
       window.setTimeout(() => markBowlActive(tone.id, false), isMallet ? 2200 : 1500);
@@ -111,10 +121,10 @@ export function SoundTherapyGame() {
   );
 
   const startRubbing = useCallback(
-    async (tone: BowlTone) => {
+    async (tone: BowlTone, registerIndex: number) => {
       const engine = await getEngine();
       if (!engine) return;
-      engine.startRub(tone.id, tone.frequency);
+      engine.startRub(tone.id, tone.frequency, registerIndex);
       markBowlActive(tone.id, true);
       setNotice(`持续磨奏 ${tone.note} · 松开即可收音`);
     },
@@ -130,23 +140,27 @@ export function SoundTherapyGame() {
     [markBowlActive],
   );
 
-  function handleBowlPointerDown(event: PointerEvent<HTMLButtonElement>, tone: BowlTone) {
+  function handleBowlPointerDown(
+    event: PointerEvent<HTMLButtonElement>,
+    tone: BowlTone,
+    registerIndex: number,
+  ) {
     if (tool !== "rub") return;
     event.currentTarget.setPointerCapture(event.pointerId);
-    void startRubbing(tone);
+    void startRubbing(tone, registerIndex);
   }
 
   function handleBowlPointerUp(tone: BowlTone) {
     if (tool === "rub") stopRubbing(tone);
   }
 
-  function handleBowlClick(tone: BowlTone, keyboardTriggered: boolean) {
+  function handleBowlClick(tone: BowlTone, registerIndex: number, keyboardTriggered: boolean) {
     if (tool !== "rub") {
-      void strikeBowl(tone);
+      void strikeBowl(tone, registerIndex);
       return;
     }
     if (keyboardTriggered) {
-      void startRubbing(tone);
+      void startRubbing(tone, registerIndex);
       window.setTimeout(() => stopRubbing(tone), 1800);
     }
   }
@@ -300,50 +314,55 @@ export function SoundTherapyGame() {
             </div>
           </div>
 
-          <div className="mt-10 overflow-x-auto rounded-[24px] border border-[#514c3d20] bg-[rgba(255,255,255,0.32)] shadow-[0_24px_70px_rgba(69,64,48,0.08)]">
+          <div className="mt-10 space-y-4 overflow-x-auto pb-2">
             {BOWL_REGISTERS.map((register, registerIndex) => (
               <div
                 key={register.id}
-                className={`grid min-w-[750px] grid-cols-[128px_repeat(7,minmax(76px,1fr))] items-center gap-1 px-5 py-7 ${
-                  registerIndex > 0 ? "border-t border-[#514c3d1a]" : ""
-                }`}
+                className={styles.registerRow}
               >
-                <div className="pr-4">
-                  <div className="font-[family-name:var(--font-display)] text-lg">{register.name}</div>
+                <div className={styles.registerMeta}>
+                  <div className="font-[family-name:var(--font-display)] text-xl">{register.name}</div>
                   <div className="mt-1 text-[10px] tracking-[0.16em] text-[#8a8475]">{register.subtitle}</div>
                   <div className="mt-3 h-px w-7 bg-[#9c8955]" />
+                  <div className="mt-4 text-[9px] tracking-[0.13em] text-[#a19a89]">
+                    {registerIndex === 0 ? "LOW" : registerIndex === 3 ? "HIGH" : `0${registerIndex + 1}`}
+                  </div>
                 </div>
-                {register.tones.map((tone) => (
-                  <button
-                    key={tone.id}
-                    type="button"
-                    aria-label={`${register.name} ${tone.note}，${tone.chakra}，${
-                      tool === "rub" ? "按住磨奏" : "点击敲击"
-                    }`}
-                    className={`${styles.bowl} ${activeBowls.has(tone.id) ? styles.bowlActive : ""}`}
-                    style={
-                      {
-                        "--bowl-color": tone.color,
-                        "--bowl-glow": tone.glow,
-                        transform: `scale(${0.87 + registerIndex * 0.035})`,
-                      } as CSSProperties
-                    }
-                    onPointerDown={(event) => handleBowlPointerDown(event, tone)}
-                    onPointerUp={() => handleBowlPointerUp(tone)}
-                    onPointerCancel={() => handleBowlPointerUp(tone)}
-                    onClick={(event) => handleBowlClick(tone, event.detail === 0)}
-                  >
-                    <span className={styles.bowlBody} aria-hidden />
-                    <span className={styles.bowlRim} aria-hidden />
-                    <span className={styles.toneLabel}>
-                      <i className={styles.chakraDot} />
-                      <strong className="font-[family-name:var(--font-display-latin)] text-sm font-semibold">
-                        {tone.note}
-                      </strong>
-                      <span className="text-[9px] tracking-wider text-[#898373]">{tone.solfege}</span>
-                    </span>
-                  </button>
-                ))}
+                <div className={styles.bowlArc}>
+                  {register.tones.map((tone, toneIndex) => (
+                    <button
+                      key={tone.id}
+                      type="button"
+                      aria-label={`${register.name} ${tone.note}，${tone.chakra}，${
+                        tool === "rub" ? "按住磨奏" : "点击敲击"
+                      }`}
+                      className={`${styles.bowl} ${activeBowls.has(tone.id) ? styles.bowlActive : ""}`}
+                      style={
+                        {
+                          "--bowl-color": tone.color,
+                          "--bowl-glow": tone.glow,
+                          "--arc-y": `${BOWL_ARC[toneIndex].y}px`,
+                          "--arc-rotate": `${BOWL_ARC[toneIndex].rotate}deg`,
+                          "--register-scale": 0.86 + registerIndex * 0.035,
+                        } as CSSProperties
+                      }
+                      onPointerDown={(event) => handleBowlPointerDown(event, tone, registerIndex)}
+                      onPointerUp={() => handleBowlPointerUp(tone)}
+                      onPointerCancel={() => handleBowlPointerUp(tone)}
+                      onClick={(event) => handleBowlClick(tone, registerIndex, event.detail === 0)}
+                    >
+                      <span className={styles.bowlBody} aria-hidden />
+                      <span className={styles.bowlRim} aria-hidden />
+                      <span className={styles.toneLabel}>
+                        <i className={styles.chakraDot} />
+                        <strong className="font-[family-name:var(--font-display-latin)] text-sm font-semibold">
+                          {tone.note}
+                        </strong>
+                        <span className="text-[9px] tracking-wider text-[#898373]">{tone.solfege}</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
