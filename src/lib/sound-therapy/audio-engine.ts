@@ -21,12 +21,18 @@ export class SoundTherapyEngine {
   private rubVoices = new Map<string, RubVoice>();
   private recorder: MediaRecorder | null = null;
   private recordingChunks: Blob[] = [];
+  private unlockAudio: HTMLAudioElement;
 
   constructor() {
     const Context = AudioContextConstructor();
     if (!Context) throw new Error("当前浏览器不支持 Web Audio");
 
-    this.context = new Context();
+    this.context = new Context({ latencyHint: "interactive" });
+    this.unlockAudio = new Audio(
+      "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQQAAACAgICA",
+    );
+    this.unlockAudio.preload = "auto";
+    this.unlockAudio.setAttribute("playsinline", "");
     this.master = this.context.createGain();
     this.master.gain.value = 0.72;
     this.resonance = this.context.createConvolver();
@@ -48,7 +54,31 @@ export class SoundTherapyEngine {
   }
 
   async wake() {
-    if (this.context.state === "suspended") await this.context.resume();
+    if (this.context.state === "closed") throw new Error("音频引擎已关闭");
+
+    const pulse = this.context.createBufferSource();
+    pulse.buffer = this.context.createBuffer(1, 1, this.context.sampleRate);
+    pulse.connect(this.master);
+    pulse.start(0);
+
+    if (this.context.state !== "running") {
+      const mediaUnlock = this.unlockAudio.play().catch(() => undefined);
+      await this.context.resume();
+      await mediaUnlock;
+      this.unlockAudio.pause();
+      try {
+        this.unlockAudio.currentTime = 0;
+      } catch {
+        // Older WebKit can reject seeking on a tiny data URI; playback is already unlocked.
+      }
+    }
+
+    if (this.context.state !== "running") throw new Error("手机系统阻止了声音播放");
+    return true;
+  }
+
+  getState() {
+    return this.context.state;
   }
 
   setVolume(value: number) {

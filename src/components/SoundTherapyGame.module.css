@@ -184,6 +184,7 @@
   --bowl-color: #927d4c;
   --bowl-glow: #c8ac67;
   --arc-y: 0px;
+  --arc-mobile-y: 0px;
   --arc-rotate: 0deg;
   --register-scale: 1;
   position: relative;
@@ -294,8 +295,8 @@
 
 .instrument {
   position: relative;
-  min-height: 172px;
-  padding: 22px;
+  min-height: 302px;
+  padding: 14px 18px 20px;
   overflow: hidden;
   border: 1px solid rgba(86, 78, 56, 0.14);
   border-radius: 16px;
@@ -315,6 +316,91 @@
   border: 1px solid rgba(128, 111, 66, 0.16);
   border-radius: 50%;
   box-shadow: 0 0 0 12px rgba(255, 255, 255, 0.18);
+}
+
+.instrumentVisual {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #eee9dd;
+  transform: translateZ(0);
+}
+
+.instrumentImage {
+  object-fit: cover;
+  transition: filter 240ms ease, transform 240ms ease;
+}
+
+.instrumentPlay {
+  position: absolute;
+  z-index: 4;
+  top: 24px;
+  right: 28px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid rgba(143, 124, 76, 0.28);
+  border-radius: 50%;
+  color: #806c3d;
+  background: rgba(255, 253, 246, 0.84);
+  box-shadow: 0 4px 14px rgba(65, 56, 35, 0.12);
+  backdrop-filter: blur(6px);
+}
+
+.resonanceWave {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(150, 126, 68, 0.55);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.3);
+}
+
+.instrument[data-playing="true"] .instrumentImage {
+  filter: saturate(1.08) brightness(1.04);
+}
+
+.instrument[data-playing="true"] .resonanceWave {
+  animation: resonance-wave 1.5s ease-out infinite;
+}
+
+.instrument[data-playing="true"][data-instrument="tingsha"] .instrumentImage {
+  animation: instrument-strike 0.42s ease-in-out 3;
+}
+
+.instrument[data-playing="true"][data-instrument="shell"] .instrumentImage {
+  animation: instrument-shake 0.16s ease-in-out infinite alternate;
+}
+
+.instrument[data-playing="true"][data-instrument="wind-chime"] .instrumentImage {
+  animation: instrument-sway 1.3s ease-in-out infinite;
+  transform-origin: 50% 8%;
+}
+
+.instrument[data-playing="true"][data-instrument="rainstick"] .instrumentImage {
+  animation: instrument-tilt 2.8s ease-in-out infinite;
+}
+
+.instrument[data-playing="true"][data-instrument="shaman-drum"] .instrumentImage,
+.instrument[data-playing="true"][data-instrument="handpan"] .instrumentImage {
+  animation: instrument-pulse 0.62s ease-out infinite;
+}
+
+.instrument[data-playing="true"][data-instrument="gong"] .instrumentImage {
+  animation: instrument-gong 1.8s ease-in-out infinite;
+}
+
+.instrument[data-playing="true"][data-instrument="ocean-drum"] .instrumentImage {
+  animation: instrument-ocean 3.4s ease-in-out infinite;
 }
 
 .instrument:hover {
@@ -386,6 +472,89 @@
   }
 }
 
+@keyframes resonance-wave {
+  0% {
+    opacity: 0.75;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(3.8);
+  }
+}
+
+@keyframes instrument-strike {
+  0%,
+  100% {
+    transform: rotate(0) scale(1);
+  }
+  35% {
+    transform: rotate(-2deg) scale(1.025);
+  }
+  70% {
+    transform: rotate(2deg) scale(1.015);
+  }
+}
+
+@keyframes instrument-shake {
+  from {
+    transform: translateX(-2px) rotate(-1deg) scale(1.02);
+  }
+  to {
+    transform: translateX(2px) rotate(1deg) scale(1.02);
+  }
+}
+
+@keyframes instrument-sway {
+  0%,
+  100% {
+    transform: rotate(-1.4deg) scale(1.02);
+  }
+  50% {
+    transform: rotate(1.4deg) scale(1.02);
+  }
+}
+
+@keyframes instrument-tilt {
+  0%,
+  100% {
+    transform: rotate(-1.5deg) scale(1.02);
+  }
+  50% {
+    transform: rotate(1.5deg) scale(1.02);
+  }
+}
+
+@keyframes instrument-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.035);
+  }
+}
+
+@keyframes instrument-gong {
+  0%,
+  100% {
+    transform: translateX(-1px) rotate(-0.8deg) scale(1.015);
+  }
+  50% {
+    transform: translateX(1px) rotate(0.8deg) scale(1.015);
+  }
+}
+
+@keyframes instrument-ocean {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg) scale(1.02);
+  }
+  50% {
+    transform: translateY(-2px) rotate(1deg) scale(1.02);
+  }
+}
+
 @media (max-width: 767px) {
   .hero {
     min-height: 500px;
@@ -398,7 +567,78 @@
   }
 
   .bowl {
-    min-width: 76px;
+    min-width: 0;
+    transform: translateY(var(--arc-mobile-y)) rotate(var(--arc-rotate)) scale(1);
+  }
+
+  .registerRow {
+    min-width: 0;
+    min-height: 194px;
+    grid-template-columns: 1fr;
+    padding: 14px 10px 10px;
+    border-radius: 18px;
+  }
+
+  .registerMeta {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    padding: 0 4px;
+    column-gap: 10px;
+  }
+
+  .registerMeta > div:nth-child(2) {
+    margin-top: 0;
+  }
+
+  .registerMeta > div:nth-child(3) {
+    display: none;
+  }
+
+  .registerMeta > div:nth-child(4) {
+    margin-top: 0;
+  }
+
+  .bowlArc {
+    height: 126px;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .bowlArc::before {
+    top: 24px;
+    right: 3%;
+    left: 3%;
+    height: 58px;
+    transform: translateY(12px);
+  }
+
+  .bowlBody {
+    width: 94%;
+  }
+
+  .bowlRim {
+    width: 96%;
+    border-width: 1px;
+  }
+
+  .toneLabel {
+    gap: 1px;
+    transform: scale(0.72);
+    transform-origin: 50% 100%;
+  }
+
+  .instrument {
+    min-height: 258px;
+    padding: 10px 12px 16px;
+  }
+
+  .instrumentVisual {
+    height: 128px;
+  }
+
+  .instrumentPlay {
+    top: 18px;
+    right: 20px;
   }
 }
 
@@ -411,7 +651,10 @@
 
   .tool,
   .bowl::before,
-  .instrument {
+  .instrument,
+  .instrumentImage,
+  .resonanceWave {
     transition: none;
+    animation: none !important;
   }
 }
