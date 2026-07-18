@@ -36,10 +36,10 @@ export function HomeHero() {
               进入资料库
             </Link>
             <Link
-              href="/c/wisdom-108"
+              href="/sound-therapy"
               className="rounded-full border border-white/40 px-6 py-3 text-sm text-white transition hover:bg-white/10"
             >
-              瑜伽智慧108问
+              进入颂钵音疗室
             </Link>
           </div>
         </div>
