@@ -59,7 +59,7 @@ export function HomeHero() {
       aria-label="瑜伽经典智慧"
     >
       <Image
-        src="/yoga-cosmic-hero.webp"
+        src="/yoga-cosmic-hero.png"
         alt=""
         fill
         preload
