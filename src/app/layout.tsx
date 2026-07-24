@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     template: "%s · 瑜伽学人",
   },
   description:
-    "瑜伽学人（Yoga Scholar）——以 AI 智慧贯通人文哲学，在身心平衡中归档、阅读与思辨瑜伽文献。",
+    "瑜伽学人（Yoga Scholar）——连接古典智慧、现代科学、实践技术、研究机构与世界静修中心的开放知识资料库。",
   icons: {
     icon: [{ url: "/favicon.png", type: "image/png" }],
     apple: "/apple-touch-icon.png",
@@ -36,8 +36,15 @@ export const metadata: Metadata = {
   openGraph: {
     title: "瑜伽学人 · Yoga Scholar",
     description:
-      "以 AI 智慧贯通人文哲学，在身心平衡中归档、阅读与思辨瑜伽文献。",
-    images: [{ url: "/logo-full.png", width: 1024, height: 1024, alt: "瑜伽学人" }],
+      "连接古典智慧、现代科学、实践技术、研究机构与世界静修中心。",
+    images: [
+      {
+        url: "/yoga-cosmic-hero.webp",
+        width: 1536,
+        height: 1024,
+        alt: "星空与山谷间的瑜伽冥想者",
+      },
+    ],
   },
 };
 

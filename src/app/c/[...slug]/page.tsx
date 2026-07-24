@@ -35,7 +35,8 @@ export default async function CategoryPage({ params }: Props) {
   const showLinks = current.kind === "links" || links.length > 0;
   const hasChildren = Boolean(current.children?.length);
   const isLeaf = !hasChildren;
-  const rankedLinks = pathKey === "others";
+  const rankedLinks =
+    pathKey === "research-institutions/institution-directory";
 
   const mediaAccept =
     current.kind === "media"
@@ -92,14 +93,14 @@ export default async function CategoryPage({ params }: Props) {
         <section className="mb-12">
           <h2 className="mb-2 font-[family-name:var(--font-display)] text-2xl text-[var(--ink)]">
             {rankedLinks
-              ? "印度瑜伽大学 / 高校 / 研究机构（按国际影响力排序）"
+              ? "瑜伽大学、研究机构与权威资源综合目录"
               : current.kind === "links"
                 ? "推荐权威链接"
                 : "相关推荐链接"}
           </h2>
           {rankedLinks && (
             <p className="mb-4 text-sm text-[var(--muted)]">
-              排序综合参考：国际学术可见度与研究合作、国家级定位、历史传承与全球教学影响。非单一官方排行榜。
+              原“其他”目录内容已完整迁入。序号仅用于浏览，不代表官方排名或本站背书；访问、课程与资质信息请向机构核验。
             </p>
           )}
           <div className="glass-panel rounded-2xl p-5 md:p-6">
