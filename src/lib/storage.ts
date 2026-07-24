@@ -9,6 +9,46 @@ const NOTES_FILE = path.join(DATA_DIR, "notes.json");
 const SEED_DIR = path.join(process.cwd(), "content", "seed");
 const SEED_MANIFEST = path.join(SEED_DIR, "manifest.json");
 
+const LEGACY_CATEGORY_PATHS: Record<string, string> = {
+  "philosophy-culture/yoga-philosophy": "classical-wisdom/core-texts",
+  "philosophy-culture/history-culture": "modern-science/history-culture",
+  "philosophy-culture/aesthetics": "modern-science/history-culture",
+  "philosophy-culture/philosophy-links": "classical-wisdom/sanskrit-text-libraries",
+  "body-science/anatomy": "modern-science/anatomy-physiology",
+  "body-science/physiology": "modern-science/anatomy-physiology",
+  "body-science/medicine": "modern-science/research-guides",
+  "body-science/public-health": "modern-science/medicine-evidence",
+  "body-science/mind-body": "modern-science/movement-health",
+  "body-science/health-links": "modern-science/medicine-evidence",
+  "psychology-consciousness/yoga-psychology":
+    "modern-science/psychology-consciousness",
+  "psychology-consciousness/neuroscience":
+    "modern-science/psychology-consciousness",
+  "psychology-consciousness/meditation-mindfulness":
+    "modern-science/research-guides",
+  "psychology-consciousness/sound-healing-psych":
+    "modern-science/psychology-consciousness",
+  "psychology-consciousness/consciousness":
+    "modern-science/psychology-consciousness",
+  "practical-techniques/classical/raja-ashtanga": "techniques/practice-guides",
+  "practical-techniques/classical/hatha": "techniques/practice-guides",
+  "practical-techniques/modern/practice-courses": "techniques/practice-guides",
+  "practical-techniques/modern/meditation-tech": "techniques/meditation",
+  "practical-techniques/modern/yoga-nidra": "techniques/yoga-nidra",
+  "hot-topics/yoga-neuroscience": "modern-science/research-guides",
+  "hot-topics/psychotherapy": "modern-science/psychology-consciousness",
+  "hot-topics/trauma-informed": "modern-science/psychology-consciousness",
+  "hot-topics/consciousness-research":
+    "modern-science/psychology-consciousness",
+  "hot-topics/digital-humanities": "classical-wisdom/sanskrit-text-libraries",
+  "music-sound": "techniques/sound-mantra",
+  "wisdom-108": "classical-wisdom/core-texts",
+  "women-potential": "modern-science/psychology-consciousness",
+  "education-practice/global-resources": "research-institutions/global",
+  "education-practice/industry": "research-institutions/global",
+  others: "research-institutions/institution-directory",
+};
+
 type SeedManifestItem = {
   id: string;
   sourceFile: string;
@@ -51,8 +91,23 @@ async function ensureSeedLibrary() {
       const existing = new Set(files.map((f) => f.id));
       let changed = false;
 
+      for (const file of files) {
+        const migratedPath = LEGACY_CATEGORY_PATHS[file.categoryPath];
+        if (migratedPath) {
+          file.categoryPath = migratedPath;
+          changed = true;
+        }
+      }
+
       for (const item of manifest) {
-        if (existing.has(item.id)) continue;
+        if (existing.has(item.id)) {
+          const seedFile = files.find((file) => file.id === item.id);
+          if (seedFile && seedFile.categoryPath !== item.categoryPath) {
+            seedFile.categoryPath = item.categoryPath;
+            changed = true;
+          }
+          continue;
+        }
         const sourcePath = path.join(SEED_DIR, item.sourceFile);
         let text = "";
         try {

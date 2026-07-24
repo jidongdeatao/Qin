@@ -27,14 +27,14 @@ export function SiteHeader() {
             width={44}
             height={44}
             className="rounded-full bg-white shadow-sm transition-transform duration-500 group-hover:rotate-6"
-            priority
+            preload
           />
           <div className="leading-tight">
             <div className="font-[family-name:var(--font-display)] text-xl tracking-wide text-[var(--cosmos-2)] md:text-2xl">
               瑜伽学人
             </div>
             <div className="text-[11px] tracking-wide text-[var(--muted)] md:text-xs">
-              AI智慧 · 人文哲学 · 身心平衡
+              古典智慧 · 现代科学 · 自由探索
             </div>
           </div>
         </Link>
@@ -71,14 +71,14 @@ export function SiteHeader() {
             颂钵音疗
           </Link>
           <Link
-            href="/c/others"
+            href="/c/research-institutions"
             className={`rounded-md px-3 py-2 text-sm transition ${
-              pathname.startsWith("/c/others")
+              pathname.startsWith("/c/research-institutions")
                 ? "bg-white text-[var(--violet)]"
                 : "text-[var(--muted)] hover:bg-white/70 hover:text-[var(--ink)]"
             }`}
           >
-            权威链接
+            研究机构
           </Link>
         </nav>
 
