@@ -1,3 +1,5 @@
+import { additionalResourceLinksByCategory } from "./resource-links-expanded";
+
 export type ResourceLink = {
   title: string;
   url: string;
@@ -12,6 +14,17 @@ export type ResourceLink = {
 
 /** Curated authoritative yoga / mind-body / culture resources. */
 export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
+  "classical-wisdom": [
+    {
+      title: "Ancient Wisdom — Ancient Texts Library",
+      url: "http://www.ancient-wisdom.com/library.htm",
+      description:
+        "按文明整理的古代文本导航，涵盖印度、佛教、中国、希腊、埃及与两河流域资料。它是跨文化索引而非学术出版平台，访问具体文本后仍需逐项核验译本来源与权利状态。",
+      tags: ["古代文本", "跨文化", "导航"],
+      access: "参考资料",
+      languages: ["English"],
+    },
+  ],
   "classical-wisdom/yoga-sutra": [
     {
       title: "《瑜伽经》英译公开文本（Sacred Texts）",
@@ -688,14 +701,23 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
 };
 
 export function getLinksForPath(pathKey: string): ResourceLink[] {
-  return resourceLinksByCategory[pathKey] ?? [];
+  return [
+    ...(resourceLinksByCategory[pathKey] ?? []),
+    ...(additionalResourceLinksByCategory[pathKey] ?? []),
+  ];
 }
 
 export function countLinksUnderPath(pathKey: string): number {
   const prefix = `${pathKey}/`;
-  return Object.entries(resourceLinksByCategory).reduce(
-    (total, [key, links]) =>
-      key === pathKey || key.startsWith(prefix) ? total + links.length : total,
+  const keys = new Set([
+    ...Object.keys(resourceLinksByCategory),
+    ...Object.keys(additionalResourceLinksByCategory),
+  ]);
+  return [...keys].reduce(
+    (total, key) =>
+      key === pathKey || key.startsWith(prefix)
+        ? total + getLinksForPath(key).length
+        : total,
     0,
   );
 }
