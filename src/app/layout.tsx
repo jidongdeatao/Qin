@@ -22,13 +22,23 @@ const body = Noto_Sans_SC({
   weight: ["400", "500", "700"],
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "https://qin-three.vercel.app");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "瑜伽学人 · Yoga Scholar",
     template: "%s · 瑜伽学人",
   },
   description:
     "瑜伽学人（Yoga Scholar）——连接古典智慧、现代科学、实践技术、研究机构与世界静修中心的开放知识资料库。",
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: [{ url: "/favicon.png", type: "image/png" }],
     apple: "/apple-touch-icon.png",
