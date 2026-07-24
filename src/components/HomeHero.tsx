@@ -11,24 +11,64 @@ const wisdomSlides = [
     quote: "瑜伽，是心识活动的止息。",
     source: "《瑜伽经》1.2 · Yoga Sūtra",
     note: "回到澄明的观看，认识不被波动遮蔽的自己。",
+    image: "/yoga-hero-amethyst.png",
+    tone: "amethyst",
   },
   {
     sanskrit: "समत्वं योग उच्यते",
     quote: "安住于平衡，这就称为瑜伽。",
     source: "《薄伽梵歌》2.48 · Bhagavad Gītā",
     note: "行动而不执著结果，在变化之中保持内在的等持。",
+    image: "/yoga-hero-sunrise.png",
+    tone: "sunrise",
   },
   {
     sanskrit: "तदा द्रष्टुः स्वरूपेऽवस्थानम्",
     quote: "于是，观者安住于自身本性。",
     source: "《瑜伽经》1.3 · Yoga Sūtra",
     note: "练习并非成为另一个人，而是辨认始终在场的觉知。",
+    image: "/yoga-hero-emerald.png",
+    tone: "emerald",
   },
   {
     sanskrit: "उत्तिष्ठत जाग्रत",
     quote: "起来，觉醒，向明辨者求知。",
     source: "《卡塔奥义书》1.3.14 · Kaṭha Upaniṣad",
     note: "古老的邀请穿过时代：保持清醒，以实践检验智慧。",
+    image: "/yoga-hero-amethyst.png",
+    tone: "amethyst",
+  },
+  {
+    sanskrit: "स तु दीर्घकालनैरन्तर्यसत्कारासेवितो दृढभूमिः",
+    quote: "经由长久、无间断且怀着敬意的练习，根基才会稳固。",
+    source: "《瑜伽经》1.14 · Yoga Sūtra",
+    note: "真正的转变不是短暂的用力，而是温柔、持续地返回当下。",
+    image: "/yoga-hero-emerald.png",
+    tone: "emerald",
+  },
+  {
+    sanskrit: "उद्धरेदात्मनात्मानं",
+    quote: "让人借由自身提升自己，不使自己沉沦。",
+    source: "《薄伽梵歌》6.5 · Bhagavad Gītā",
+    note: "心既可能成为朋友，也可能成为阻碍；觉察使选择重新开放。",
+    image: "/yoga-hero-sunrise.png",
+    tone: "sunrise",
+  },
+  {
+    sanskrit: "ईशावास्यमिदं सर्वम्",
+    quote: "这一切流动的世界，都被神圣的存在所遍覆。",
+    source: "《伊莎奥义书》1 · Īśā Upaniṣad",
+    note: "当万物不再只是占有的对象，节制、敬畏与自由同时发生。",
+    image: "/yoga-hero-amethyst.png",
+    tone: "amethyst",
+  },
+  {
+    sanskrit: "अशेषतापतप्तानां समाश्रयमठो हठः",
+    quote: "对于被种种苦恼灼烧的人，哈他瑜伽如同庇护之所。",
+    source: "《哈他瑜伽之光》1.10 · Haṭha Yoga Pradīpikā",
+    note: "传统把练习视为庇护而非竞赛：稳定身体，也为内在寂静准备空间。",
+    image: "/yoga-hero-emerald.png",
+    tone: "emerald",
   },
 ] as const;
 
@@ -59,14 +99,17 @@ export function HomeHero() {
       aria-label="瑜伽经典智慧"
     >
       <Image
-        src="/yoga-cosmic-hero.png"
+        key={slide.image}
+        src={slide.image}
         alt=""
         fill
         preload
         sizes="100vw"
         className="hero-cosmos-image object-cover"
       />
-      <div className="hero-cosmos-veil absolute inset-0" />
+      <div
+        className={`hero-cosmos-veil hero-cosmos-veil-${slide.tone} absolute inset-0`}
+      />
       <div className="starfield" aria-hidden />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#f4f0f8] to-transparent" />
 

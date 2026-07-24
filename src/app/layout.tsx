@@ -49,10 +49,10 @@ export const metadata: Metadata = {
       "连接古典智慧、现代科学、实践技术、研究机构与世界静修中心。",
     images: [
       {
-        url: "/yoga-cosmic-hero.png",
+        url: "/yoga-hero-amethyst.png",
         width: 1536,
         height: 1024,
-        alt: "星空与山谷间的瑜伽冥想者",
+        alt: "紫绿暖光宇宙背景中的瑜伽练习者",
       },
     ],
   },
