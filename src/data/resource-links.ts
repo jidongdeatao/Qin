@@ -3,6 +3,9 @@ export type ResourceLink = {
   url: string;
   description: string;
   tags?: string[];
+  /** Displayed provenance metadata for copyright and source transparency. */
+  access?: "公共版权" | "开放获取" | "机构官网" | "研究入口" | "参考资料";
+  languages?: string[];
   /** Optional rank badge, used by curated ranked lists. */
   rank?: number;
 };
@@ -15,18 +18,32 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
       url: "https://www.sacred-texts.com/hin/yogasutr.htm",
       description: "可在线检索的早期英文译本；适合对照阅读，引用时仍应标注具体译者与版本。",
       tags: ["英文", "公开文本"],
+      access: "公共版权",
+      languages: ["English"],
     },
     {
       title: "The Yoga-Sūtra of Patañjali（1890）",
       url: "https://archive.org/details/yogaSutraOfPatanjali",
       description: "Internet Archive 公共领域影印本，含梵文相关说明、英译、附录与传统注疏线索。",
       tags: ["梵文", "英文", "Public Domain"],
+      access: "公共版权",
+      languages: ["संस्कृत", "English"],
     },
     {
       title: "Internet Encyclopedia of Philosophy — Yoga",
       url: "https://iep.utm.edu/yoga/",
       description: "经同行学术编辑的瑜伽哲学概览，介绍帕坦伽利体系、认识论和伦理实践。",
       tags: ["哲学", "学术导读"],
+      access: "开放获取",
+      languages: ["English"],
+    },
+    {
+      title: "梵明院《瑜伽经》梵汉对照提纲",
+      url: "https://www.brhvid.com/post/%E7%91%9C%E4%BC%BD%E7%BB%8F-%E6%80%BB%E7%9B%AE%E5%BD%95",
+      description: "现代梵汉对照与评注索引；站方采用 CC BY-NC-ND 4.0，不属于公共版权，不得改编或擅自转载。",
+      tags: ["中文", "梵汉对照", "授权限制"],
+      access: "参考资料",
+      languages: ["中文", "संस्कृत"],
     },
   ],
   "classical-wisdom/upanishads": [
@@ -35,12 +52,24 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
       url: "https://www.sacred-texts.com/hin/upan/index.htm",
       description: "多部主要奥义书的早期英译公开文本入口；现代译本的版权状态需另行核验。",
       tags: ["英文", "公开文本"],
+      access: "公共版权",
+      languages: ["English"],
     },
     {
       title: "Internet Archive — Yoga Upanishads",
       url: "https://archive.org/search?query=subject%3A%22Yoga+Upanishads%22",
       description: "瑜伽奥义书历史版本的馆藏检索页，应逐条确认出版年代、扫描质量和使用标识。",
       tags: ["梵文", "数字典藏"],
+      access: "参考资料",
+      languages: ["संस्कृत", "English"],
+    },
+    {
+      title: "Gita Supersite — Upaniṣad Texts",
+      url: "https://www.gitasupersite.iitk.ac.in/upanishad",
+      description: "印度理工学院坎普尔分校维护的文本平台，提供多部奥义书原文及不同注释入口。",
+      tags: ["大学资源", "文本对读"],
+      access: "开放获取",
+      languages: ["संस्कृत", "English", "हिन्दी"],
     },
   ],
   "classical-wisdom/bhagavad-gita": [
@@ -49,12 +78,32 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
       url: "https://archive.org/details/annie-besant-bhagavadgita-word-by-word",
       description: "Annie Besant 与 Bhagavan Das 的梵文、逐词释义和英译本，标注 Public Domain。",
       tags: ["梵文", "英文", "Public Domain"],
+      access: "公共版权",
+      languages: ["संस्कृत", "English"],
     },
     {
       title: "The Bhagavad-Gita with Saṁskrit Text（1905）",
       url: "https://archive.org/details/bhagavadgitawith00londiala",
       description: "加州大学馆藏影印本，含梵文、逐词与自由英译，可用于版本对照。",
       tags: ["梵英对照", "历史版本"],
+      access: "公共版权",
+      languages: ["संस्कृत", "English"],
+    },
+    {
+      title: "Gita Supersite — IIT Kanpur",
+      url: "https://www.gitasupersite.iitk.ac.in/",
+      description: "印度理工学院坎普尔分校维护的多语种《薄伽梵歌》对读与传统注释平台。",
+      tags: ["大学资源", "多语种"],
+      access: "开放获取",
+      languages: ["संस्कृत", "English", "हिन्दी"],
+    },
+    {
+      title: "International Gita Society 中文《薄伽梵歌》",
+      url: "https://www.gita-society.com/wp-content/uploads/2019/01/bhagavad-gita-in-chinese.pdf",
+      description: "国际薄伽梵歌学会官网提供的中文阅读版；属于官方开放阅读资源，不标记为公共版权。",
+      tags: ["中文", "官方版本"],
+      access: "开放获取",
+      languages: ["中文"],
     },
   ],
   "classical-wisdom/hatha-classics": [
@@ -63,12 +112,16 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
       url: "https://archive.org/details/HathaYogaPradipika-SanskritTextWithEnglishTranslatlionAndNotes",
       description: "Pancham Singh 英译与注释的梵英对照本，Internet Archive 标注公共领域。",
       tags: ["哈他瑜伽", "Public Domain"],
+      access: "公共版权",
+      languages: ["संस्कृत", "English"],
     },
     {
       title: "The Gheraṇḍa Saṁhitā（1895）",
       url: "https://archive.org/details/b28140102",
       description: "Wellcome Library 馆藏梵英历史版本，标注 Public Domain Mark。",
       tags: ["梵文", "英文", "Public Domain"],
+      access: "公共版权",
+      languages: ["संस्कृत", "English"],
     },
   ],
   "classical-wisdom/sanskrit-text-libraries": [
@@ -77,12 +130,16 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
       url: "https://gretil.sub.uni-goettingen.de/gretil.html",
       description: "哥廷根大学维护的印度语言电子文本注册库，适合梵文原典检索与数字人文研究。",
       tags: ["梵语", "大学资源"],
+      access: "开放获取",
+      languages: ["संस्कृत", "English"],
     },
     {
       title: "Cologne Digital Sanskrit Dictionaries",
       url: "https://www.sanskrit-lexicon.uni-koeln.de/",
       description: "科隆大学数字梵语词典项目，可交叉检索 Monier-Williams 等历史词典。",
       tags: ["梵语", "词典"],
+      access: "开放获取",
+      languages: ["संस्कृत", "English"],
     },
     {
       title: "Internet Archive — Yoga Collection",
@@ -284,6 +341,22 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
       description: "印度宗教、梵文与传统研究课程入口，可用于建立唱诵和曼陀罗的学术背景。",
       tags: ["曼陀罗", "学术"],
     },
+    {
+      title: "PubMed — Mantra Meditation",
+      url: "https://pubmed.ncbi.nlm.nih.gov/?term=mantra+meditation",
+      description: "曼陀罗重复、冥想与相关心理生理研究入口，需按研究设计和具体技术分别评估。",
+      tags: ["曼陀罗", "科学研究"],
+      access: "研究入口",
+      languages: ["English"],
+    },
+    {
+      title: "Sangeet Natak Akademi",
+      url: "https://www.sangeetnatak.gov.in/",
+      description: "印度国家级表演艺术机构，可用于扩展梵唱、传统音乐与文化语境研究。",
+      tags: ["印度音乐", "文化机构"],
+      access: "机构官网",
+      languages: ["English", "हिन्दी"],
+    },
   ],
   "research-institutions/global": [
     {
@@ -303,6 +376,14 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
       url: "https://nimhans.ac.in/nimhans-integrated-centre-for-yoga/",
       description: "将瑜伽纳入心理与神经医学服务、培训和科学研究的专业中心。",
       tags: ["印度", "神经精神"],
+    },
+    {
+      title: "WHO Collaborating Centres Database",
+      url: "https://apps.who.int/whocc/",
+      description: "世界卫生组织合作中心官方检索库，可独立核验机构当前的指定领域和有效期限。",
+      tags: ["WHO", "机构核验"],
+      access: "研究入口",
+      languages: ["English"],
     },
   ],
   "research-institutions/journals-databases": [
@@ -489,6 +570,14 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
       description: "印度尼西亚乌布的瑜伽生态社区项目；开放状态和项目进度请直接向机构确认。",
       tags: ["印尼", "生态村"],
     },
+    {
+      title: "Parmarth Niketan — Rishikesh",
+      url: "https://parmarth.org/",
+      description: "印度瑞诗凯诗的历史静修院，官网公布瑜伽、冥想、住宿与节庆项目。",
+      tags: ["印度", "Rishikesh"],
+      access: "机构官网",
+      languages: ["English"],
+    },
   ],
   "retreats-world/europe": [
     {
@@ -508,6 +597,14 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
       url: "https://www.mandali.org/",
       description: "意大利北部山地静修中心，接待瑜伽、冥想与身心课程。",
       tags: ["意大利", "山地静修"],
+    },
+    {
+      title: "Yoga Vidya — Germany",
+      url: "https://www.yoga-vidya.org/",
+      description: "德国非营利瑜伽网络，运营住宿型修习中心并提供课程、静修与教师培训信息。",
+      tags: ["德国", "非营利"],
+      access: "机构官网",
+      languages: ["Deutsch", "English"],
     },
   ],
   "retreats-world/americas": [
@@ -535,6 +632,14 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
       description: "全球目录中的加拿大魁北克 Val-Morin 静修中心。",
       tags: ["加拿大", "传统"],
     },
+    {
+      title: "Himalayan Institute Retreat Center",
+      url: "https://himalayaninstitute.org/retreat-center/",
+      description: "美国宾夕法尼亚州的瑜伽、冥想与阿育吠陀教育静修中心。",
+      tags: ["美国", "喜马拉雅传统"],
+      access: "机构官网",
+      languages: ["English"],
+    },
   ],
   "retreats-world/oceania-africa": [
     {
@@ -548,6 +653,22 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
       url: "https://www.emoyeni.org.za/",
       description: "南非自然环境中的非营利静修中心，承办瑜伽与冥想项目。",
       tags: ["南非", "非营利"],
+    },
+    {
+      title: "Govinda Valley Retreat — Australia",
+      url: "https://govindavalley.com.au/",
+      description: "澳大利亚新南威尔士州的非营利静修场所，接待瑜伽、冥想及身心课程。",
+      tags: ["澳大利亚", "非营利"],
+      access: "机构官网",
+      languages: ["English"],
+    },
+    {
+      title: "Kawai Purapura — New Zealand",
+      url: "https://kawaipurapura.co.nz/",
+      description: "新西兰奥克兰附近的瑜伽、健康与社区型静修中心，官网提供住宿和活动信息。",
+      tags: ["新西兰", "社区"],
+      access: "机构官网",
+      languages: ["English"],
     },
   ],
   "retreats-world/global-networks": [
@@ -568,4 +689,13 @@ export const resourceLinksByCategory: Record<string, ResourceLink[]> = {
 
 export function getLinksForPath(pathKey: string): ResourceLink[] {
   return resourceLinksByCategory[pathKey] ?? [];
+}
+
+export function countLinksUnderPath(pathKey: string): number {
+  const prefix = `${pathKey}/`;
+  return Object.entries(resourceLinksByCategory).reduce(
+    (total, [key, links]) =>
+      key === pathKey || key.startsWith(prefix) ? total + links.length : total,
+    0,
+  );
 }

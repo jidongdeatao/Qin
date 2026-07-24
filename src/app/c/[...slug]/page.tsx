@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BookOpenCheck, LibraryBig, ShieldCheck } from "lucide-react";
 import {
   categoryPathKey,
   findCategoryPath,
   getCategoryByPath,
 } from "@/data/categories";
-import { getLinksForPath } from "@/data/resource-links";
+import {
+  countLinksUnderPath,
+  getLinksForPath,
+} from "@/data/resource-links";
 import { CategoryTree } from "@/components/CategoryTree";
 import { FileLibrary } from "@/components/FileLibrary";
 import { ResourceLinks } from "@/components/ResourceLinks";
@@ -32,6 +36,7 @@ export default async function CategoryPage({ params }: Props) {
   const current = path[path.length - 1];
   const pathKey = categoryPathKey(slug);
   const links = getLinksForPath(pathKey);
+  const curatedCount = countLinksUnderPath(pathKey);
   const showLinks = current.kind === "links" || links.length > 0;
   const hasChildren = Boolean(current.children?.length);
   const isLeaf = !hasChildren;
@@ -76,6 +81,22 @@ export default async function CategoryPage({ params }: Props) {
             {current.description}
           </p>
         )}
+        <div className="mt-6 flex flex-wrap gap-2 text-xs">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-white/55 px-3 py-1.5 text-[var(--muted)]">
+            <LibraryBig size={14} className="text-[var(--violet)]" />
+            {hasChildren ? `${current.children!.length} 个主题` : "专题资料页"}
+          </span>
+          {curatedCount > 0 && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-white/55 px-3 py-1.5 text-[var(--muted)]">
+              <BookOpenCheck size={14} className="text-[var(--mint-deep)]" />
+              {curatedCount} 条精选资源
+            </span>
+          )}
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-white/55 px-3 py-1.5 text-[var(--muted)]">
+            <ShieldCheck size={14} className="text-[var(--mint-deep)]" />
+            来源与版权分级
+          </span>
+        </div>
       </header>
 
       {hasChildren && (
@@ -103,7 +124,12 @@ export default async function CategoryPage({ params }: Props) {
               原“其他”目录内容已完整迁入。序号仅用于浏览，不代表官方排名或本站背书；访问、课程与资质信息请向机构核验。
             </p>
           )}
-          <div className="glass-panel rounded-2xl p-5 md:p-6">
+          {!rankedLinks && (
+            <p className="mb-5 max-w-3xl text-sm leading-6 text-[var(--muted)]">
+              资源按公共版权、开放获取、研究入口与机构官网标识。链接可访问不代表允许转载；引用前请查看来源页最新许可。
+            </p>
+          )}
+          <div>
             <ResourceLinks links={links} showRank={rankedLinks} />
           </div>
         </section>
